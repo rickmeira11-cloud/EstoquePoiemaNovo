@@ -9,12 +9,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
 
   async function login() {
     setSubmitting(true)
     setErrorMessage('')
+    setSuccessMessage('')
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -29,6 +31,40 @@ export default function LoginPage() {
     }
 
     setErrorMessage(error.message)
+  }
+
+  async function createAdminFirstAccess() {
+    setSubmitting(true)
+    setErrorMessage('')
+    setSuccessMessage('')
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          role: 'admin',
+          access_level: 'admin',
+          first_access_admin: true,
+        },
+      },
+    })
+
+    setSubmitting(false)
+
+    if (error) {
+      setErrorMessage(error.message)
+      return
+    }
+
+    if (data.session) {
+      router.push('/dashboard')
+      return
+    }
+
+    setSuccessMessage(
+      'Usuario admin criado. Se a confirmacao de email estiver ativa no Supabase, confirme o email antes de entrar.'
+    )
   }
 
   return (
@@ -78,19 +114,41 @@ export default function LoginPage() {
                 />
               </label>
 
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-slate-300">
+                Primeiro acesso:
+                {' '}
+                use o segundo botao para criar um usuario com papel de admin no Supabase Auth.
+              </div>
+
               {errorMessage ? (
                 <div className="rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
                   {errorMessage}
                 </div>
               ) : null}
 
-              <button
-                onClick={login}
-                disabled={submitting}
-                className="w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {submitting ? 'Entrando...' : 'Entrar'}
-              </button>
+              {successMessage ? (
+                <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                  {successMessage}
+                </div>
+              ) : null}
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button
+                  onClick={login}
+                  disabled={submitting}
+                  className="w-full rounded-2xl bg-violet-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {submitting ? 'Processando...' : 'Entrar'}
+                </button>
+
+                <button
+                  onClick={createAdminFirstAccess}
+                  disabled={submitting}
+                  className="w-full rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-200 transition hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Primeiro acesso admin
+                </button>
+              </div>
             </div>
           </div>
         </section>

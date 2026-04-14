@@ -22,6 +22,7 @@ function cn(...classes) {
 
 export function TopNav({
   userLabel = null,
+  roleLabel = null,
   onSignOut = null,
   accentLabel = 'Gestao de estoque',
   showAuthLinks = false,
@@ -71,6 +72,12 @@ export function TopNav({
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          {roleLabel ? (
+            <div className="rounded-full bg-violet-500/15 px-3 py-2 text-xs font-medium uppercase tracking-[0.22em] text-violet-200">
+              {roleLabel}
+            </div>
+          ) : null}
+
           {userLabel ? (
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200">
               {userLabel}
@@ -117,6 +124,12 @@ export function TopNav({
             {userLabel ? (
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-slate-300">
                 {userLabel}
+              </div>
+            ) : null}
+
+            {roleLabel ? (
+              <div className="rounded-2xl bg-violet-500/10 px-4 py-3 text-sm uppercase tracking-[0.22em] text-violet-200">
+                {roleLabel}
               </div>
             ) : null}
 

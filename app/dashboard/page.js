@@ -209,6 +209,8 @@ export default function Dashboard() {
     router.replace('/login')
   }
 
+  const roleLabel = sessionUser?.user_metadata?.role === 'admin' ? 'Admin' : 'Usuario'
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0d0d14] text-white">
@@ -232,6 +234,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#0d0d14] text-white">
       <TopNav
         userLabel={sessionUser?.email ?? 'Equipe Poiema'}
+        roleLabel={roleLabel}
         onSignOut={handleSignOut}
       />
 
@@ -269,6 +272,12 @@ export default function Dashboard() {
                   <p className="mt-2 truncate text-sm text-white">
                     {sessionUser?.email ?? 'Nao identificado'}
                   </p>
+                </div>
+                <div className="rounded-3xl border border-white/10 bg-black/20 px-5 py-4">
+                  <p className="text-[0.68rem] uppercase tracking-[0.28em] text-slate-400">
+                    Nivel de acesso
+                  </p>
+                  <p className="mt-2 text-sm text-white">{roleLabel}</p>
                 </div>
               </div>
             </div>
